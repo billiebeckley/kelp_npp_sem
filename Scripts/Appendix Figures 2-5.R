@@ -10,6 +10,7 @@ library(gridExtra)
 library(car)
 library(extrafont)  # Required for system fonts
 library(grid)
+library(ggeffects)
 
 # Load system fonts (only needed once)
 loadfonts(device = "win")  # Windows users
@@ -399,14 +400,14 @@ grid.arrange(arrangeGrob(growth2, left = y.grob))
 
 # --- Title grob ---
 title_grob2 <- textGrob(
-  "Figure S4",
+  "Figure S5",
   x = 0, y = 1,
   just = c("left", "top"),
   gp = gpar(fontsize = 30, fontface = "bold", family = "sans")
 )
 
 # --- Combined figure using grid.arrange() ---
-final_fig_S4 <- grid.arrange(
+final_fig_S5 <- grid.arrange(
   title_grob2,
   arrangeGrob(growth2, left = y.grob),
   ncol = 1,
@@ -485,6 +486,7 @@ biomass_plot <- ggplot(npp_plot.df, aes(APRIL_BIOMASS, NPP_dry_per.year, shape =
            fontface = "bold",
            family = "sans")
 
+biomass_plot
 
 # recruits plot
 # Generate predictions for the recruitment variable
@@ -535,7 +537,7 @@ recruits_plot <- ggplot(npp_plot.df, aes(KELP_RECRUITS_M2, NPP_dry_per.year, sha
            fontface = "bold",
            family = "sans")
 
-
+recruits_plot
 
 # growth plot
 xmax_growth <- max(npp_plot.df$KELP_GROWTH, na.rm = TRUE)
@@ -572,10 +574,48 @@ growth_plot <- ggplot(npp_plot.df, aes(KELP_GROWTH, NPP_dry_per.year)) +
   )
 
 
+#legend
+growth_plot_bl <- ggplot(npp_plot.df, aes(KELP_GROWTH, NPP_dry_per.year)) +
+  geom_point(aes(shape = Site), color = "black", size = 5, show.legend = TRUE) +
+  scale_shape_manual(values = c(
+    "ABUR" = 16,  # circle
+    "AQUE" = 15,  # square
+    "MOHK" = 17   # triangle
+  )) +
+  ylab(NULL) +
+  xlab(bquote(atop('Mass specific growth rate', ~'('~d^-1~')'))) + 
+  theme_classic(base_size = 25) + 
+  guides(size = FALSE) +
+  coord_cartesian(xlim = c(0, 0.061)) +
+  scale_y_continuous(
+    limits = c(0, 10.5),
+    breaks = seq(0, 10, length.out = 5),
+    labels = scales::label_number(accuracy = 0.1)
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 0.06, length.out = 4),
+    labels = scales::label_number(accuracy = 0.01)
+  ) +
+  scale_shape_manual(
+    values = c("ABUR" = 16, "AQUE" = 15, "MOHK" = 17),
+    labels = c("Arroyo Burro", "Arroyo Quemada", "Mohawk")
+  ) +
+  labs(tag = "(c)") +
+  theme(
+    text = element_text(family = "sans"),
+    axis.text = element_text(colour = "black"),
+    axis.title.x = element_text(size = 25, color = "black"),
+    axis.title.y = element_text(size = 25),
+    plot.tag = element_text(size = 29, face = "bold")
+  )
+
+# extract the legend from one of the plots
+legend_bl <- get_legend(growth_plot_bl)
+
 # combine plots
 npp2 <- cowplot::plot_grid(
   biomass_plot, recruits_plot, growth_plot,
-  legend2, ncol = 2, rel_widths = c(3, 3, 3, 0.4)
+  legend_bl, ncol = 2, rel_widths = c(3, 3, 3, 0.4)
 )
 
 # y axis label
@@ -591,17 +631,66 @@ grid.arrange(arrangeGrob(npp2, left = y.grob))
 
 # --- Title grob ---
 title_grob3 <- textGrob(
-  "Figure S5",
+  "Figure S6",
   x = 0, y = 1,
   just = c("left", "top"),
   gp = gpar(fontsize = 30, fontface = "bold", family = "sans")
 )
 
 # --- Combined figure using grid.arrange() ---
-final_fig_S5 <- grid.arrange(
+final_fig_S6 <- grid.arrange(
   title_grob3,
   arrangeGrob(npp2, left = y.grob),
   ncol = 1,
   heights = c(0.05, 1)   # adjust title vs figure space
 )
+
+
+# S4- NEW ----------------------------------------------------------------------
+
+#model
+urchin_sand_m1 <- glmmTMB(URCHIN_GRAZING_AVE ~ SAND_COVER +
+                            Site, family = tweedie(link = "log"), data = npp_variables, na.action = na.omit)
+
+summary(urchin_sand_m1)
+performance::check_model(urchin_sand_m1)
+simulationOutput <- simulateResiduals(fittedModel = urchin_sand_m1) #shows normality and variance
+plot(simulationOutput)
+car::Anova(urchin_sand_m1)
+#not significant p = 0.066, so trendline is not included in plot.
+
+urchin_sand.df <- npp_variables %>% 
+  dplyr::select(kelp.year, LARGE_WAVES_MAX, SAND_COVER, URCHIN_GRAZING_AVE, Site) 
+
+
+sand_max <- max(urchin_sand.df$SAND_COVER, na.rm = TRUE)
+sand_breaks <- seq(0, sand_max, length.out = 5)
+
+y_max <- max(urchin_sand.df$URCHIN_GRAZING_AVE, na.rm = TRUE)
+y_lim <- ceiling(y_max/100) * 100  # round up to nearest 100
+
+urchin_sand_plot <- ggplot(urchin_sand.df, aes(x = SAND_COVER, y = URCHIN_GRAZING_AVE)) +
+  geom_point(aes(shape = Site), size = 5, color = "black", show.legend = TRUE) +
+  scale_y_continuous(trans = "log1p") +
+  xlab("Sand cover (%)") +
+  ylab(bquote('Grazing capacity (g'~m^2~d^-1~')')) + 
+  ggtitle("Figure S4") +   # ← ADD TITLE ABOVE FIGURE
+  theme_classic(base_size = 25) +
+  guides(size = FALSE, color = guide_legend(override.aes = list(size = 5))) +
+  scale_color_discrete(labels = c('Arroyo Burro', 'Arroyo Quemada', 'Mohawk')) +
+  scale_shape_manual(
+    values = c("ABUR" = 16, "AQUE" = 15, "MOHK" = 17),
+    labels = c("Arroyo Burro", "Arroyo Quemada", "Mohawk")
+  ) +
+  theme(
+    text = element_text(family = "sans"),
+    axis.text = element_text(colour = "black", size = 25),
+    axis.title = element_text(size = 25),
+    
+    # Title formatting (top-left by default)
+    plot.title = element_text(size = 30, face = "bold", hjust = 0),
+    
+    legend.text = element_text(size = 25),
+    legend.title = element_text(size = 25)
+  )
 

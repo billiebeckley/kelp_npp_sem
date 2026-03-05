@@ -1,20 +1,20 @@
 #' ---------------------------------------------------------
 #' Script to load kelp forest SBC LTER data
 #' and create dataframes to use for SEM variable creation
-#' @date 2026-1-7 last update
+#' @date 2026-3-3 last update
 #' @author Billie Beckley
 #'-----------------------------------------------------------
 
 # Waves -------------------------------------------------------
 
-# Package ID: knb-lter-sbc.35.11 Cataloging System:https://pasta.edirepository.org.
+# Package ID: knb-lter-sbc.35.12 Cataloging System:https://pasta.edirepository.org.
 # Data set title: SBC LTER: Daily averages of modeled significant wave height (Hs) and peak wave period (Tp) in the Santa Barbara Coastal area from the Coastal Data Information Program - Monitoring and Prediction System (CDIP MOP).
 # Data set creator:    - Coastal Data Information Program 
 # Data set creator:  Tom W Bell -  
-# Contact:    - Information Manager, Santa Barbara Coastal LTER   - sbclter@msi.ucsb.edu
+# Contact:    -  Santa Barbara Coastal LTER  - sbclter@msi.ucsb.edu
 # Stylesheet v2.11 for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@virginia.edu 
 
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/35/11/9d33fd69b20b41284431f197bce9e250" 
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/35/12/9d33fd69b20b41284431f197bce9e250" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -42,8 +42,8 @@ if (class(dt1$site)!="factor") dt1$site<- as.factor(dt1$site)
 tmpDateFormat<-"%Y-%m-%d"
 tmp1date_GMT<-as.Date(dt1$date_GMT,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp1date_GMT) == length(tmp1date_GMT[!is.na(tmp1date_GMT)])){dt1$date_GMT <- tmp1date_GMT } else {print("Date conversion failed for dt1$date_GMT. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp1date_GMT) 
+if(nrow(dt1[dt1$date_GMT != "",]) == length(tmp1date_GMT[!is.na(tmp1date_GMT)])){dt1$date_GMT <- tmp1date_GMT } else {print("Date conversion failed for dt1$date_GMT. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt1$Mean_Hs_m)=="factor") dt1$Mean_Hs_m <-as.numeric(levels(dt1$Mean_Hs_m))[as.integer(dt1$Mean_Hs_m) ]               
 if (class(dt1$Mean_Hs_m)=="character") dt1$Mean_Hs_m <-as.numeric(dt1$Mean_Hs_m)
 if (class(dt1$Max_Hs_m)=="factor") dt1$Max_Hs_m <-as.numeric(levels(dt1$Max_Hs_m))[as.integer(dt1$Max_Hs_m) ]               
@@ -80,24 +80,20 @@ summary(longitude)
 # Get more details on character variables
 
 summary(as.factor(dt1$site))
-detach(dt1)               
-
+detach(dt1)    
 
 # Tidy
-waves_daily_dat2 <- dt1; rm(dt1)
-
-
+waves_daily_dat <- dt1; rm(dt1)
 
 # Substrate/ Sand --------------------------------------------------------
-# Package ID: knb-lter-sbc.138.3 Cataloging System:https://pasta.edirepository.org.
+# Package ID: knb-lter-sbc.138.5 Cataloging System:https://pasta.edirepository.org.
 # Data set title: SBC LTER: Reef: Kelp Forest Community Dynamics: Cover of bottom substrate and sand depth.
-# Data set creator:    - Santa Barbara Coastal LTER 
 # Data set creator:  Daniel C Reed -  
 # Data set creator:  Robert J Miller -  
-# Contact:    - Information Manager, Santa Barbara Coastal LTER   - sbclter@msi.ucsb.edu
+# Contact:    -  Santa Barbara Coastal LTER  - sbclter@msi.ucsb.edu
 # Stylesheet v2.11 for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@virginia.edu 
 
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/138/3/82d1b4ba2b2c1b5438ae1279e19bf68b" 
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/138/5/82d1b4ba2b2c1b5438ae1279e19bf68b" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -127,8 +123,8 @@ unlink(infile1)
 tmpDateFormat<-"%Y-%m-%d"
 tmp1DATE<-as.Date(dt1$DATE,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp1DATE) == length(tmp1DATE[!is.na(tmp1DATE)])){dt1$DATE <- tmp1DATE } else {print("Date conversion failed for dt1$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp1DATE) 
+if(nrow(dt1[dt1$DATE != "",]) == length(tmp1DATE[!is.na(tmp1DATE)])){dt1$DATE <- tmp1DATE } else {print("Date conversion failed for dt1$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt1$SITE)!="factor") dt1$SITE<- as.factor(dt1$SITE)
 if (class(dt1$TRANSECT)!="factor") dt1$TRANSECT<- as.factor(dt1$TRANSECT)
 if (class(dt1$QUAD)!="factor") dt1$QUAD<- as.factor(dt1$QUAD)
@@ -176,7 +172,7 @@ summary(as.factor(dt1$COMMON_NAME))
 detach(dt1)               
 
 
-inUrl2  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/138/3/a46a2e69dbf70a0e75f669a4bacf18ca" 
+inUrl2  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/138/5/a46a2e69dbf70a0e75f669a4bacf18ca" 
 infile2 <- tempfile()
 try(download.file(inUrl2,infile2,method="curl"))
 if (is.na(file.size(infile2))) download.file(inUrl2,infile2,method="auto")
@@ -204,8 +200,8 @@ unlink(infile2)
 tmpDateFormat<-"%Y-%m-%d"
 tmp2DATE<-as.Date(dt2$DATE,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp2DATE) == length(tmp2DATE[!is.na(tmp2DATE)])){dt2$DATE <- tmp2DATE } else {print("Date conversion failed for dt2$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp2DATE) 
+if(nrow(dt2[dt2$DATE != "",]) == length(tmp2DATE[!is.na(tmp2DATE)])){dt2$DATE <- tmp2DATE } else {print("Date conversion failed for dt2$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt2$SITE)!="factor") dt2$SITE<- as.factor(dt2$SITE)
 if (class(dt2$TRANSECT)!="factor") dt2$TRANSECT<- as.factor(dt2$TRANSECT)
 if (class(dt2$DISTANCE)=="factor") dt2$DISTANCE <-as.numeric(levels(dt2$DISTANCE))[as.integer(dt2$DISTANCE) ]               
@@ -243,7 +239,7 @@ summary(SAND_DEPTH)
 summary(as.factor(dt2$SITE)) 
 summary(as.factor(dt2$TRANSECT)) 
 summary(as.factor(dt2$SIDE))
-detach(dt2)               
+detach(dt2)
 
 
 # Tidy
@@ -251,18 +247,16 @@ substrate.cover_by.date_dat2 <- dt1; rm(dt1)
 sand.depth_by.date_dat2 <- dt2; rm(dt2)
 
 
-
 # Urchins ------------------------------------------------------
 
-# Package ID: knb-lter-sbc.50.13 Cataloging System:https://pasta.edirepository.org.
+# Package ID: knb-lter-sbc.50.17 Cataloging System:https://pasta.edirepository.org.
 # Data set title: SBC LTER: Reef: Annual time series of biomass for kelp forest species, ongoing since 2000.
-# Data set creator:    - Santa Barbara Coastal LTER 
 # Data set creator:  Daniel C Reed -  
 # Data set creator:  Robert J Miller -  
-# Contact:    - Information Manager, Santa Barbara Coastal LTER   - sbclter@msi.ucsb.edu
+# Contact:    -  Santa Barbara Coastal LTER  - sbclter@msi.ucsb.edu
 # Stylesheet v2.11 for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@virginia.edu 
 
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/50/13/24d18d9ebe4f6e8b94e222840096963c" 
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/50/17/24d18d9ebe4f6e8b94e222840096963c" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -307,8 +301,8 @@ unlink(infile1)
 tmpDateFormat<-"%Y-%m-%d"
 tmp1DATE<-as.Date(dt1$DATE,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp1DATE) == length(tmp1DATE[!is.na(tmp1DATE)])){dt1$DATE <- tmp1DATE } else {print("Date conversion failed for dt1$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp1DATE) 
+if(nrow(dt1[dt1$DATE != "",]) == length(tmp1DATE[!is.na(tmp1DATE)])){dt1$DATE <- tmp1DATE } else {print("Date conversion failed for dt1$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt1$SITE)!="factor") dt1$SITE<- as.factor(dt1$SITE)
 if (class(dt1$TRANSECT)!="factor") dt1$TRANSECT<- as.factor(dt1$TRANSECT)
 if (class(dt1$VIS)=="factor") dt1$VIS <-as.numeric(levels(dt1$VIS))[as.integer(dt1$VIS) ]               
@@ -409,27 +403,24 @@ summary(as.factor(dt1$GROUP))
 summary(as.factor(dt1$MOBILITY)) 
 summary(as.factor(dt1$GROWTH_MORPH)) 
 summary(as.factor(dt1$COARSE_GROUPING))
-detach(dt1)               
-
+detach(dt1)      
 
 # Tidy
 algae.invert.fish.biomass_by.date_dat2 <- dt1; rm(dt1)
 
 
-
 # NPP Kelp ----------------------------------------------------------------
-# Package ID: knb-lter-sbc.112.7 Cataloging System:https://pasta.edirepository.org.
-# Data set title: SBC LTER: REEF:  Net primary production, growth and standing crop of Macrocystis pyrifera in Southern California.
-# Data set creator:    - Santa Barbara Coastal LTER 
+# Package ID: knb-lter-sbc.112.10 Cataloging System:https://pasta.edirepository.org.
+# Data set title: SBC LTER: REEF: Net primary production, growth and standing crop of Macrocystis pyrifera in Southern California.
 # Data set creator:  Andrew A Rassweiler -  
 # Data set creator:  Shannon Harrer -  
 # Data set creator:  Daniel C Reed -  
 # Data set creator:  Clint J Nelson -  
 # Data set creator:  Robert J Miller -  
-# Contact:    - Information Manager, Santa Barbara Coastal LTER   - sbclter@msi.ucsb.edu
+# Contact:    -  Santa Barbara Coastal LTER  - sbclter@msi.ucsb.edu
 # Stylesheet v2.11 for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@virginia.edu 
 
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/6f24a9026ff356773b93d16390f998b1" 
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/6f24a9026ff356773b93d16390f998b1" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -542,7 +533,7 @@ summary(as.factor(dt1$Season))
 detach(dt1)               
 
 
-inUrl2  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/62685a4fb61873c1843433a3364fd08a" 
+inUrl2  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/62685a4fb61873c1843433a3364fd08a" 
 infile2 <- tempfile()
 try(download.file(inUrl2,infile2,method="curl"))
 if (is.na(file.size(infile2))) download.file(inUrl2,infile2,method="auto")
@@ -600,8 +591,8 @@ if (class(dt2$Site)!="factor") dt2$Site<- as.factor(dt2$Site)
 tmpDateFormat<-"%Y-%m-%d"
 tmp2Date<-as.Date(dt2$Date,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp2Date) == length(tmp2Date[!is.na(tmp2Date)])){dt2$Date <- tmp2Date } else {print("Date conversion failed for dt2$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp2Date) 
+if(nrow(dt2[dt2$Date != "",]) == length(tmp2Date[!is.na(tmp2Date)])){dt2$Date <- tmp2Date } else {print("Date conversion failed for dt2$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt2$FSC_dry)=="factor") dt2$FSC_dry <-as.numeric(levels(dt2$FSC_dry))[as.integer(dt2$FSC_dry) ]               
 if (class(dt2$FSC_dry)=="character") dt2$FSC_dry <-as.numeric(dt2$FSC_dry)
 if (class(dt2$FSC_carbon)=="factor") dt2$FSC_carbon <-as.numeric(levels(dt2$FSC_carbon))[as.integer(dt2$FSC_carbon) ]               
@@ -795,7 +786,7 @@ summary(as.factor(dt2$Site))
 detach(dt2)               
 
 
-inUrl3  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/d23ff8674913610988f2aa8d32ac2df1" 
+inUrl3  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/d23ff8674913610988f2aa8d32ac2df1" 
 infile3 <- tempfile()
 try(download.file(inUrl3,infile3,method="curl"))
 if (is.na(file.size(infile3))) download.file(inUrl3,infile3,method="auto")
@@ -822,8 +813,8 @@ if (class(dt3$Plant_ID)!="factor") dt3$Plant_ID<- as.factor(dt3$Plant_ID)
 tmpDateFormat<-"%Y-%m-%d"
 tmp3Date<-as.Date(dt3$Date,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp3Date) == length(tmp3Date[!is.na(tmp3Date)])){dt3$Date <- tmp3Date } else {print("Date conversion failed for dt3$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp3Date) 
+if(nrow(dt3[dt3$Date != "",]) == length(tmp3Date[!is.na(tmp3Date)])){dt3$Date <- tmp3Date } else {print("Date conversion failed for dt3$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt3$Total_fronds)=="factor") dt3$Total_fronds <-as.numeric(levels(dt3$Total_fronds))[as.integer(dt3$Total_fronds) ]               
 if (class(dt3$Total_fronds)=="character") dt3$Total_fronds <-as.numeric(dt3$Total_fronds)
 if (class(dt3$New_fronds)=="factor") dt3$New_fronds <-as.numeric(levels(dt3$New_fronds))[as.integer(dt3$New_fronds) ]               
@@ -852,7 +843,7 @@ summary(as.factor(dt3$Plant_ID))
 detach(dt3)               
 
 
-inUrl4  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/471d15f0059405e8639425408aee4153" 
+inUrl4  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/471d15f0059405e8639425408aee4153" 
 infile4 <- tempfile()
 try(download.file(inUrl4,infile4,method="curl"))
 if (is.na(file.size(infile4))) download.file(inUrl4,infile4,method="auto")
@@ -880,8 +871,8 @@ if (class(dt4$Site)!="factor") dt4$Site<- as.factor(dt4$Site)
 tmpDateFormat<-"%Y-%m-%d"
 tmp4Date<-as.Date(dt4$Date,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp4Date) == length(tmp4Date[!is.na(tmp4Date)])){dt4$Date <- tmp4Date } else {print("Date conversion failed for dt4$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp4Date) 
+if(nrow(dt4[dt4$Date != "",]) == length(tmp4Date[!is.na(tmp4Date)])){dt4$Date <- tmp4Date } else {print("Date conversion failed for dt4$Date. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt4$Replicate)!="factor") dt4$Replicate<- as.factor(dt4$Replicate)
 if (class(dt4$Dry_to_wet_ratio)=="factor") dt4$Dry_to_wet_ratio <-as.numeric(levels(dt4$Dry_to_wet_ratio))[as.integer(dt4$Dry_to_wet_ratio) ]               
 if (class(dt4$Dry_to_wet_ratio)=="character") dt4$Dry_to_wet_ratio <-as.numeric(dt4$Dry_to_wet_ratio)
@@ -923,7 +914,7 @@ summary(as.factor(dt4$Replicate))
 detach(dt4)               
 
 
-inUrl5  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/6bc968141edf7b9e0a6bac923f5f78b2" 
+inUrl5  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/6bc968141edf7b9e0a6bac923f5f78b2" 
 infile5 <- tempfile()
 try(download.file(inUrl5,infile5,method="curl"))
 if (is.na(file.size(infile5))) download.file(inUrl5,infile5,method="auto")
@@ -996,7 +987,7 @@ summary(as.factor(dt5$pvalue))
 detach(dt5)               
 
 
-inUrl6  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/7/f81190938c9835f6ba5f7b825cc9af35" 
+inUrl6  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/112/10/f81190938c9835f6ba5f7b825cc9af35" 
 infile6 <- tempfile()
 try(download.file(inUrl6,infile6,method="curl"))
 if (is.na(file.size(infile6))) download.file(inUrl6,infile6,method="auto")
@@ -1030,8 +1021,8 @@ unlink(infile6)
 tmpDateFormat<-"%Y-%m-%d"
 tmp6DATE<-as.Date(dt6$DATE,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp6DATE) == length(tmp6DATE[!is.na(tmp6DATE)])){dt6$DATE <- tmp6DATE } else {print("Date conversion failed for dt6$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp6DATE) 
+if(nrow(dt6[dt6$DATE != "",]) == length(tmp6DATE[!is.na(tmp6DATE)])){dt6$DATE <- tmp6DATE } else {print("Date conversion failed for dt6$DATE. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt6$SITE)!="factor") dt6$SITE<- as.factor(dt6$SITE)
 if (class(dt6$TRANSECT)!="factor") dt6$TRANSECT<- as.factor(dt6$TRANSECT)
 if (class(dt6$SIDE)!="factor") dt6$SIDE<- as.factor(dt6$SIDE)
@@ -1095,7 +1086,8 @@ summary(as.factor(dt6$SITE))
 summary(as.factor(dt6$TRANSECT)) 
 summary(as.factor(dt6$SIDE)) 
 summary(as.factor(dt6$C_P_T))
-detach(dt6)               
+detach(dt6)   
+
 
 # Tidy up
 kelp.npp_by.season_dat <- dt1; rm(dt1)
@@ -1106,18 +1098,16 @@ kelp.regression.parms_dat <- dt5; rm(dt5)
 kelp.frond.dens_dat <- dt6; rm(dt6)
 
 
-
 # Temperature --------------------------------------------------
 
-# Package ID: knb-lter-sbc.13.29 Cataloging System:https://pasta.edirepository.org.
+# Package ID: knb-lter-sbc.13.31 Cataloging System:https://pasta.edirepository.org.
 # Data set title: SBC LTER: Reef: Bottom Temperature: Continuous water temperature, ongoing since 2000.
-# Data set creator:    - Santa Barbara Coastal LTER 
 # Data set creator:  Daniel C Reed -  
 # Data set creator:  Robert J Miller -  
-# Contact:    - Information Manager, Santa Barbara Coastal LTER   - sbclter@msi.ucsb.edu
+# Contact:    -  Santa Barbara Coastal LTER  - sbclter@msi.ucsb.edu
 # Stylesheet v2.11 for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@virginia.edu 
 
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/13/29/d707a45a2cd6eee1d016d99844d537da" 
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/knb-lter-sbc/13/31/d707a45a2cd6eee1d016d99844d537da" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -1144,8 +1134,8 @@ if (class(dt1$SERIAL)!="factor") dt1$SERIAL<- as.factor(dt1$SERIAL)
 tmpDateFormat<-"%Y-%m-%d"
 tmp1DATE_LOCAL<-as.Date(dt1$DATE_LOCAL,format=tmpDateFormat)
 # Keep the new dates only if they all converted correctly
-if(length(tmp1DATE_LOCAL) == length(tmp1DATE_LOCAL[!is.na(tmp1DATE_LOCAL)])){dt1$DATE_LOCAL <- tmp1DATE_LOCAL } else {print("Date conversion failed for dt1$DATE_LOCAL. Please inspect the data and do the date conversion yourself.")}                                                                    
-rm(tmpDateFormat,tmp1DATE_LOCAL) 
+if(nrow(dt1[dt1$DATE_LOCAL != "",]) == length(tmp1DATE_LOCAL[!is.na(tmp1DATE_LOCAL)])){dt1$DATE_LOCAL <- tmp1DATE_LOCAL } else {print("Date conversion failed for dt1$DATE_LOCAL. Please inspect the data and do the date conversion yourself.")}                                                                    
+
 if (class(dt1$TEMP_C)=="factor") dt1$TEMP_C <-as.numeric(levels(dt1$TEMP_C))[as.integer(dt1$TEMP_C) ]               
 if (class(dt1$TEMP_C)=="character") dt1$TEMP_C <-as.numeric(dt1$TEMP_C)
 
@@ -1171,13 +1161,8 @@ summary(TEMP_C)
 
 summary(as.factor(dt1$SITE)) 
 summary(as.factor(dt1$SERIAL))
-detach(dt1)               
-
+detach(dt1)            
 
 # Tidy
 temp_by.10min_dat2 <- dt1; rm(dt1)
-
-
-
-
 
